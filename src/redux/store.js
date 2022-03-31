@@ -6,5 +6,3 @@ const store = createStore(reducers, compose(applyMiddleware(thunk)))
 
 
 export default store
-
-// compose(applyMiddleware(thunk))

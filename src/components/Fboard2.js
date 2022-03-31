@@ -80,10 +80,7 @@ const Fboard = () => {
                     <img src="./images/fz3.png" alt="" width="42" height="42"/>
                 </a>
                 <div class="navbar-collapse" id="navbarSupportedContent">
-                <form class="d-flex m-auto">
-                    <input class="form-control me-2" type="search" value={text}  onChange={e=>setText(e.target.value)} placeholder="Search" aria-label="Search"/>
-                    <button style={{backgroundColor:"rgba(52, 197, 52, 0.767)"}} onClick={handleClick} class="btn text-white border" type="submit">Search</button>
-                </form>
+                
                 <div className="div">
                 <button class="btn text-success bb-buttonv" type="submit">
                 <a href="/users/add" className="btn text-success bb-buttonv">Create Item</a></button>
