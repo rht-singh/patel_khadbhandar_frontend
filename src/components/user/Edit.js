@@ -51,6 +51,7 @@ const Edit = () => {
         .catch(err=>console.log(err))
     },[])
     const inputChnage = (e)=>{
+        console.log('slkdhf')
         setProduct({...Product, [e.target.name]:e.target.value})
     }
     
