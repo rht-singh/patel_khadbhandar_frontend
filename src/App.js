@@ -10,31 +10,32 @@ import Edit from './components/user/Edit';
 import TableCon from './components/TableCon';
 import Fboard from './components/Fboard';
 import Eye from './components/user/Eye';
+import Login from './components/user/Login';
 export default function App() { 
   return (
     <div>
       <Router>
-        <Fboard/>
         <Switch>
             <Route exact path = "/">
+            <Fboard/>
               <div className="mt-5">
               <TableCon/>
               </div>
             </Route>
+          <Route exact path = "/login">
+            <Login/>
+          </Route>
             <Route exact path = "/users/add">
-              {/* <Fboard/> */}
               <div className="container mt-5">
                 <AddUser/>
               </div>
             </Route>
             <Route exact path = {`/users/edit/:id`}>
-            {/* <Fboard/> */}
               <div className="container mt-5">
                 <Edit/>
               </div>
             </Route>
             <Route exact path = {`/users/:id`}>
-            {/* <Fboard/> */}
               <div className="container mt-5">
                 <Eye/>
               </div>

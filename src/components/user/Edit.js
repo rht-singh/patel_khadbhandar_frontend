@@ -43,7 +43,7 @@ const Edit = () => {
         setUser(result.data)
     }
     useEffect(()=>{
-        loadUser()
+        loadUser() 
     },[])
 
   return (

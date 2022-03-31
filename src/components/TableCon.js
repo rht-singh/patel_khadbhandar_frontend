@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import * as FaIcon from 'react-icons/fa'
 import * as BiIcon from 'react-icons/bi'
 import * as MdIcon from 'react-icons/md'
+import Eye from './user/Eye'
 
 const TabStyle = ()=> {
     return (
@@ -30,6 +31,23 @@ const TabStyle = ()=> {
                     display:block;
                     margin-bottom:55px;
                 }
+                
+                .d-phone{
+                    display:none;
+                }
+                @media screen and (max-width:980px){
+                    .d-laptop{
+                        display:none;
+                    }
+                    .d-phone{
+                        display:flex;
+                        flex-wrap:wrap;
+                    }
+                    .ddf{
+                        display:flex;
+                        justify-content:center;
+                    }
+                }
                 @media screen and (max-width:780px){
                     .main-card{
                         height:150px;
@@ -42,6 +60,14 @@ const TabStyle = ()=> {
                         font-size:20px;
                         font-weight:600;
                     }
+                    .d-laptop{
+                        display:none;
+                    }
+                    .d-phone{
+                        display:flex;
+                        flex-wrap:wrap;
+                    }
+                    
                 }
                 .item-tab tr{
                     margin-bottom:55px;
@@ -82,6 +108,13 @@ const TabStyle = ()=> {
                     font-size:15px;
                     font-weight:600;
                 }
+                .w-n{
+                    font-size:17px;
+                    font-weight:600;
+                }
+                .w-dd{
+                    width:98%;
+                }
             `}
         </style>
     )
@@ -113,87 +146,99 @@ const TableCon = () => {
 
   return (
     <>
-        <div class="container-fluid-main m-auto my-5 popin">
-            <div class="row">
+        <div className="container-fluid-main m-auto my-5 popin">
+            <div className="row">
 
-                <div class="col-6 col-md-3 mb-3">
-                    <div class="shadow p-3 bg-white rounded text-center">
-                        <div class="card-body main-card">
-                            <div class="card-icon mb-3"><FaIcon.FaShoppingBag/></div>
-                            <h5 class="card-title">Total Product</h5>
-                            <p class="card-amount">{data.count}</p>
+                <div className="col-6 col-md-3 mb-3">
+                    <div className="shadow p-3 bg-white rounded text-center">
+                        <div className="card-body main-card">
+                            <div className="card-icon mb-3"><FaIcon.FaShoppingBag/></div>
+                            <h5 className="card-title">Total Product</h5>
+                            <p className="card-amount">{data.count}</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-6 col-md-3 mb-3">
-                    <div class="shadow p-3 bg-white rounded text-center">
-                        <div class="card-body main-card">
-                            <div class="card-icon  mb-3"><FaIcon.FaStore/></div>
-                            <h5 class="card-title">Quantity</h5>
-                            <p class="card-amount">{data.Quantity}</p>
+                <div className="col-6 col-md-3 mb-3">
+                    <div className="shadow p-3 bg-white rounded text-center">
+                        <div className="card-body main-card">
+                            <div className="card-icon  mb-3"><FaIcon.FaStore/></div>
+                            <h5 className="card-title">Quantity</h5>
+                            <p className="card-amount">{data.Quantity}</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-6 col-md-3 mb-3">
-                    <div class="shadow p-3 bg-white rounded text-center">
-                        <div class="card-body main-card">
-                            <div class="card-icon  mb-3"><FaIcon.FaShoppingCart/></div>
-                            <h5 class="card-title">Sold</h5>
-                            <p class="card-amount">{data.Sold}</p>
+                <div className="col-6 col-md-3 mb-3">
+                    <div className="shadow p-3 bg-white rounded text-center">
+                        <div className="card-body main-card">
+                            <div className="card-icon  mb-3"><FaIcon.FaShoppingCart/></div>
+                            <h5 className="card-title">Sold</h5>
+                            <p className="card-amount">{data.Sold}</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-6 col-md-3 mb-3">
-                    <div class="shadow p-3 bg-white rounded text-center">
-                        <div class="card-body main-card">
-                            <div class="card-icon  mb-3"><BiIcon.BiMeteor/></div>
-                            <h5 class="card-title">Total</h5>
-                            <p class="card-amount">{data.total}</p>
+                <div className="col-6 col-md-3 mb-3">
+                    <div className="shadow p-3 bg-white rounded text-center">
+                        <div className="card-body main-card">
+                            <div className="card-icon  mb-3"><BiIcon.BiMeteor/></div>
+                            <h5 className="card-title">Total</h5>
+                            <p className="card-amount">{data.total}</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="container mt-5 mb-3">
-                <div class="row">
-                    <div class="col-12 col-md-2 m-auto">
+            <div className={`container mt-5 mb-3 d-laptop`}>
+                <div className="row d-laptop">
+                    <div className="col-12 col-md-2 m-auto">
                     <h2 className="my-2 text-center">No</h2>
                     </div>
-                    <div class="col-12 col-md-2 m-auto">
+                    <div className="col-12 col-md-2 m-auto">
                     <h2 className="my-2 text-center">Product Name</h2>
                     </div>
-                    <div class="col-12 col-md-2 m-auto">
+                    <div className="col-12 col-md-2 m-auto">
                     <h2 className="my-2 text-center">Quantity</h2>
                     </div>
-                    <div class="col-12 col-md-2 m-auto">
-                    <h2 className="my-2 text-center">Total</h2>
+                    <div className="col-12 col-md-2 m-auto">
+                    <h2 className="my-2 text-center">Sold</h2>
                     </div>
-                    <div class="col-12 col-md-2 m-auto">
+                    <div className="col-12 col-md-2 m-auto">
                     <h2 className="my-2 text-center">Action</h2>
                     </div>
                 </div>
             </div>
 
-            <div class="container">
+            <div className={`container d-laptop`}>
             {users.map((user, index)=>{
                 return(
-            <div class="row my-2 py-3 d-flex flex-wrap popin bg-light">
-                    <div class="col-12 col-md-2 m-auto">
+            <div className="row mb-5 d-laptop pt-3 pb-2 d-flex flex-wrap popin bg-light m-auto w-100 rounded-3">
+                    <div className="col-12 col-md-2 m-auto pe-4">
                     <h3 className="my-2 text-center">{index+1}</h3>
                     </div>
-                    <div class="col-12 col-md-2 m-auto">
-                    <h5 className="my-2 text-center"> <span className='pe-2'><img style={{width:"50px", height:"50px"}} src="./images/fz3.png" alt="" /></span> {user.username.slice(0,7)}..</h5>
+                    <div className="col-12 col-md-2 m-auto">
+                    <h5 className="my-2 text-center"><span className='pe-2'><img style={{width:"50px", height:"50px"}} src="./images/fz3.png" alt="" /></span> {user.username.slice(0,7)}..</h5>
                     </div>
-                    <div class="col-12 col-md-2 m-auto">
+                    <div className="col-12 col-md-2 m-auto">
                     <h5 className="my-2 text-center">{index}..</h5>
                     </div>
-                    <div class="col-12 col-md-2 m-auto">
+                    <div className="col-12 col-md-2 m-auto">
                     <h5 className="my-2 text-center">{user.email.slice(0,12)}..</h5>
                     </div>
-                    <div class="col-12 col-md-2 m-auto">
+                    <div className="col-12 col-md-2 m-auto">
                     <div className="my-2 text-center">
                     <button className="btn btn-dan me-3" onClick={()=> deleteUser(user.id)}> <span><MdIcon.MdDelete/></span> </button>
                     <Link to={`/users/edit/${user.id}`} className="btn btn-succ">Edit</Link>
+                    </div>
+                    </div>
+                    <p>
+                    <button className="btn btn-light w-100" type="button" data-bs-toggle="collapse" data-bs-target={`#collapseExample${user.id}`} aria-expanded="false" aria-controls={`collapseExample${user.id}`}>
+                        <div className='text-center pt-3  w-n text-success'><p>Click Here To Create Slip</p></div>
+                    </button>
+                    </p>
+                    <div className="collapse" id={`collapseExample${user.id}`}>
+                    <div className="card card-body">
+                        <div className="div my-3">
+                            <Eye id={user.id} />
+                        </div>
                     </div>
                     </div>
                 </div>
@@ -201,6 +246,57 @@ const TableCon = () => {
             }
             )}
         </div>
+
+
+        <div className={`container d-phone my-5`}>
+            {users.map((user, index)=>{
+                return(
+            <div className="row mb-5 pt-3 pb-2 d-flex flex-wrap popin bg-light m-auto w-100 rounded-3">
+                    <div className="col-12 col-md-12 m-auto d-flex my-3">
+                        <span className='pe-2 me-3'><img style={{width:"50px", height:"50px"}} src="./images/fz3.png" alt="" /></span>
+                    <h5 className="my-2 text-center"><p className='w-n'></p>  {user.username.slice(0,7)}....</h5>
+                    </div>
+                    <div className="col-12 col-md-12 text-center m-auto my-3">
+                    <h5 className="my-2 text-center d-flex ddf me-2">
+                        <div className='mx-3'><p className='w-n '>Quantuty</p><p>{index}.</p></div>
+                        <div className='mx-3'><p className='w-n'>Sold</p><p>{user.email.slice(0,12)}..</p></div>
+                    </h5>
+                    </div>
+                    <div className="col-12 col-md-12 m-auto my-4">
+                    <div className="my-2 text-center">
+                    <button className="btn btn-dan me-3" onClick={()=> deleteUser(user.id)}> <span><MdIcon.MdDelete/></span> </button>
+                    <Link to={`/users/edit/${user.id}`} className="btn btn-succ">Edit</Link>
+                    </div>
+                    </div>
+                    <p>
+                    <button className="btn btn-light w-100" type="button" data-bs-toggle="collapse" data-bs-target={`#collapseExample${user.id}`} aria-expanded="false" aria-controls={`collapseExample${user.id}`}>
+                        <div className='text-center pt-3  w-n text-success'><p>Click Here To Create Slip</p></div>
+                    </button>
+                    </p>
+                    <div className="collapse" id={`collapseExample${user.id}`}>
+                    <div className="card card-body">
+                        <div className="div my-3">
+                            <Eye id={user.id} />
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                )
+            }
+            )}
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
         </div>
         <TabStyle/>
     </>
