@@ -89,6 +89,7 @@ const Login = () => {
         }).then((res) => {
             cookies.set('auth_key',res.data.token);
             console.log(cookies.get('auth_key'))
+            toast.success("Logged In")
             dispatch({type:'AUTH',data:res.data.token})
             history.push("/")
         })

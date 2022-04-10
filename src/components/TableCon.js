@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import ReactHtmlParser from 'react-html-parser';
 import { Link } from 'react-router-dom'
 import * as FaIcon from 'react-icons/fa'
 import * as BiIcon from 'react-icons/bi'
@@ -7,7 +8,9 @@ import * as MdIcon from 'react-icons/md'
 import { useSelector } from 'react-redux'
 import Cookies from 'universal-cookie'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
-import { toast } from 'react-toastify'
+import { ToastContainer, toast } from 'react-toastify';
+// import Eye from './user/Eye'/
+
 const TabStyle = () => {
     return (
         <style>
@@ -33,7 +36,25 @@ const TabStyle = () => {
                     display:block;
                     margin-bottom:55px;
                 }
+                
+                .d-phone{
+                    display:none;
+                }
+                @media screen and (max-width:980px){
+                    .d-laptop{
+                        // display:none;    
+                    }
+                    .d-phone{
+                        display:flex;
+                        flex-wrap:wrap;
+                    }
+                    .ddf{
+                        display:flex;
+                        justify-content:center;
+                    }
+                }
                 @media screen and (max-width:780px){
+                
                     .main-card{
                         height:150px;
                         display:flex;
@@ -45,6 +66,14 @@ const TabStyle = () => {
                         font-size:20px;
                         font-weight:600;
                     }
+                    .d-laptop{
+                        // display:none;
+                    }
+                    .d-phone{
+                        display:flex;
+                        flex-wrap:wrap;
+                    }
+                    
                 }
                 .item-tab tr{
                     margin-bottom:55px;
@@ -85,28 +114,69 @@ const TabStyle = () => {
                     font-size:15px;
                     font-weight:600;
                 }
+                .w-n{
+                    font-size:17px;
+                    font-weight:600;
+                }
+                .w-dd{
+                    width:98%;
+                }
             `}
         </style>
     )
 }
 
+// {
+//     "data":[
+//         {"buyer":"Rohit","location":"Panipat"},
+//         {"product_name":"shirt","product_id":"6247f51025ea547e12064089","sell":"10"},
+//         {"product_name":"shirt","product_id":"624930ce5918a3ab04ae2250","sell":"15"}
+//         ]
+// }
+
 const TableCon = () => {
 
-    const cookies =  new Cookies();
+    const cookies = new Cookies();
     const token = cookies.get('auth_key');
 
-
     const [data, setData] = useState({
-        count:0,
-        Quantity:0,
-        Sold:0,
-        total:0
+        count: 0,
+        Quantity: 0,
+        Sold: 0,
+        total: 0
     })
+    const [html, Sethtml] = useState([])
+    const [addAnother, setaddAnother] = useState(false)
     const [flag, setFlag] = useState(false)
     const [Products, setProducts] = useState([])
+    const [productNames, setproductNames] = useState([])
+    const [salesForm, setsalesForm] = useState([{ 'data': 1 }])
+    const [saleData, setsaleData] = useState([{ buyer: '', location: 0 }, { product_id: '', sell: 0 }])
     const history = useHistory()
+
+
+    const GenrateSlipt = () => {
+
+        axios({
+            method: 'post',
+            headers: { auth: `bearer ${token}` },
+            url: 'https://ferltilizer.herokuapp.com/api/v1/getSlip',
+            data: { data: saleData },
+        })
+            .then((res) => {
+                console.log(res.data.html)
+                if (res.data.html)
+                    Sethtml([...html, res.data.html])
+                setaddAnother(true)
+                // html.push(res.data.html) 
+            })
+            .catch(err => console.log(err))
+
+        // console.log(html)
+    }
     useEffect(() => {
-        // setFlag[true]
+
+
         axios({
             method: 'get',
 
@@ -114,13 +184,15 @@ const TableCon = () => {
             url: 'https://ferltilizer.herokuapp.com/api/v1/AllProduct',
         })
             .then((res) => {
-                if(res.data.success === false){
+                if (res.data.success === false) {
                     console.log(res.data.error)
                     toast.error(res.data.error)
                     history.push("/login")
                 }
-                console.log( res)
+                console.log('first')
+                console.log(res)
                 setProducts(res.data.data)
+                setproductNames(res.data.data.map((i) => i))
             })
             .catch((error) => { console.log(error) })
 
@@ -131,7 +203,7 @@ const TableCon = () => {
             url: 'https://ferltilizer.herokuapp.com/api/v1/get_all_products_detail',
         })
             .then((resp) => {
-                if(resp.data.data.length>0){
+                if (resp.data.data.length > 0) {
                     setData(resp.data.data[0])
                 }
             })
@@ -140,120 +212,329 @@ const TableCon = () => {
     }, [flag])
 
     const deleteUser = async (id) => {
-
         axios({
             method: 'delete',
 
             headers: { auth: `bearer ${token}` },
             url: `https://ferltilizer.herokuapp.com/api/v1/product/${id}`,
         })
-        .then((res) => {
-            setFlag(true)
-            setFlag(false)
-        })
+            .then((res) => {
+                setFlag(true)
+                setFlag(false)
+                toast.success('Product Deleted')
+            })
     }
 
-    let resp = useSelector((state) => state.products.data);
-    useEffect(() => {
-        if (resp != null) {
-            if (resp.success) {
-                setProducts(resp.data)
-            }
+    let res = useSelector((state) => state.products.data);
 
-        }
-    }, [resp])
+    useEffect(() => {
+        if (res != null)
+            setProducts(res.data)
+    }, [res])
+
+    const addinput = (id) => {
+        console.log(id)
+        console.log(document.getElementsByClassName('inertInput').item)
+    }
 
     return (
         <>
-            <div class="container-fluid-main m-auto my-5 popin">
-                <div class="row">
+            <ToastContainer />
+            <div className="container-fluid-main m-auto my-5 popin">
+                <div className="row">
 
-                    <div class="col-6 col-md-3 mb-3">
-                        <div class="shadow p-3 bg-white rounded text-center">
-                            <div class="card-body main-card">
-                                <div class="card-icon mb-3"><FaIcon.FaShoppingBag /></div>
-                                <h5 class="card-title">Total Product</h5>
-                                <p class="card-amount">{data.count}</p>
+                    <div className="col-6 col-md-3 mb-3">
+                        <div className="shadow p-3 bg-white rounded text-center">
+                            <div className="card-body main-card">
+                                <div className="card-icon mb-3"><FaIcon.FaShoppingBag /></div>
+                                <h5 className="card-title">Total Product</h5>
+                                <p className="card-amount">{data.count}</p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-6 col-md-3 mb-3">
-                        <div class="shadow p-3 bg-white rounded text-center">
-                            <div class="card-body main-card">
-                                <div class="card-icon  mb-3"><FaIcon.FaStore /></div>
-                                <h5 class="card-title">Quantity</h5>
-                                <p class="card-amount">{data.Quantity}</p>
+                    <div className="col-6 col-md-3 mb-3">
+                        <div className="shadow p-3 bg-white rounded text-center">
+                            <div className="card-body main-card">
+                                <div className="card-icon  mb-3"><FaIcon.FaStore /></div>
+                                <h5 className="card-title">Quantity</h5>
+                                <p className="card-amount">{data.Quantity}</p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-6 col-md-3 mb-3">
-                        <div class="shadow p-3 bg-white rounded text-center">
-                            <div class="card-body main-card">
-                                <div class="card-icon  mb-3"><FaIcon.FaShoppingCart /></div>
-                                <h5 class="card-title">Sold</h5>
-                                <p class="card-amount">{data.Sold}</p>
+                    <div className="col-6 col-md-3 mb-3">
+                        <div className="shadow p-3 bg-white rounded text-center">
+                            <div className="card-body main-card">
+                                <div className="card-icon  mb-3"><FaIcon.FaShoppingCart /></div>
+                                <h5 className="card-title">Sold</h5>
+                                <p className="card-amount">{data.Sold}</p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-6 col-md-3 mb-3">
-                        <div class="shadow p-3 bg-white rounded text-center">
-                            <div class="card-body main-card">
-                                <div class="card-icon  mb-3"><BiIcon.BiMeteor /></div>
-                                <h5 class="card-title">Total</h5>
-                                <p class="card-amount">{data.total}</p>
+                    <div className="col-6 col-md-3 mb-3">
+                        <div className="shadow p-3 bg-white rounded text-center">
+                            <div className="card-body main-card">
+                                <div className="card-icon  mb-3"><BiIcon.BiMeteor /></div>
+                                <h5 className="card-title">Total</h5>
+                                <p className="card-amount">{data.total}</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="container mt-5 mb-3">
-                    <div class="row">
-                        <div class="col-12 col-md-2 m-auto">
-                            <h2 className="my-2 text-center">No</h2>
+                <div className={`container mt-5 mb-3 d-laptop`}>
+                    <div className="row d-laptop">
+                        <div className="col-2 col-md-2 col-sm-2 col-lg-2">
+                            <h2 style={{fontSize:'15px'}} className="my-2 text-center">No</h2>
                         </div>
-                        <div class="col-12 col-md-2 m-auto">
-                            <h2 className="my-2 text-center">Product Name</h2>
+                        <div className="col-3 col-md-2 col-sm-2 col-lg-2">
+                            <h2 style={{fontSize:'15px'}} className="my-2 text-center">Product Name</h2>
                         </div>
-                        <div class="col-12 col-md-2 m-auto">
-                            <h2 className="my-2 text-center">Quantity</h2>
+                        <div className="col-3 col-md-2 col-sm-2 col-lg-2">
+                            <h2 style={{fontSize:'15px'}} className="my-2 text-end ">Quantity</h2>
                         </div>
-                        <div class="col-12 col-md-2 m-auto">
-                            <h2 className="my-2 text-center">Total</h2>
+                        <div className="col-2 col-md-2 col-sm-2 col-lg-2">
+                            <h2 style={{fontSize:'15px'}} className="my-2 text-end">Sold</h2>
                         </div>
-                        <div class="col-12 col-md-2 m-auto">
-                            <h2 className="my-2 text-center">Action</h2>
+                        <div className="col-1 col-md-2 col-sm-2 col-lg-2    ">
+                            <h2 style={{fontSize:'15px'}} className="my-2 text-end">Action</h2>
                         </div>
                     </div>
                 </div>
 
-                <div class="container">
-                    {Products.length ==0 ? <h4 className='text-center mt-5'> you have No product for now please add some</h4>: 
-                    Products.map((user, index) => {
+                <div className={`  d-laptop`}>
+                    {Products.map((user, index) => {
                         return (
-                            <div class="row my-2 py-3 d-flex flex-wrap popin bg-light">
-                                <div class="col-12 col-md-2 m-auto">
-                                    <h3 className="my-2 text-center">{index + 1}</h3>
+                            <div className="row mb-5 d-laptop pt-3 pb-2 px-1 d-flex flex-wrap popin bg-light m-auto w-100 rounded-3">
+                                <div className="col-1 col-md-2 col-sm-2 col-lg-1 m-auto pe-4">
+                                    <h3 className="my-2 text-end">{index + 1}</h3>
                                 </div>
-                                <div class="col-12 col-md-2 m-auto">
-                                    <h5 className="my-2 text-center"> <span className='pe-2'><img style={{ width: "50px", height: "50px" }} src={user.img_url ? user.img_url : "./images/fz3.png"} alt="" /></span> {user.product_name}</h5>
+                                <div className="col-2 col-md-2 col-sm-2 m-auto">
+                                    <h5 className="my-2 text-center"><span className='pe-2'><img style={{ width: "50px", height: "50px" }} src={user.img_url} alt="" /></span> {user.product_name}</h5>
                                 </div>
-                                <div class="col-12 col-md-2 m-auto">
+                                <div className="col-2 col-md-2 col-sm-2 m-auto">
                                     <h5 className="my-2 text-center">{user.quantity}</h5>
                                 </div>
-                                <div class="col-12 col-md-2 m-auto">
-                                    <h5 className="my-2 text-center">{user.total}</h5>
+                                <div className="col-2 col-md-2 col-sm-2 m-auto">
+                                    <h5 className="my-2 text-center">{user.sold}</h5>
                                 </div>
-                                <div class="col-12 col-md-2 m-auto">
+                                <div className="col-3 col-md-2 col-sm-2 col-lg-3 ">
+                                    <div className="my-2 text-center">
+                                        <button className="btn btn-dan me-3 m-2 " onClick={() => deleteUser(user._id)}> <span><MdIcon.MdDelete /></span> </button>
+                                        <Link to={`/users/edit/${user._id}`} className="btn "><img style={{ height: '20px', width: '20px' }} src='./images/icons8-edit-30.png'></img></Link>
+                                        <button className="btn btn-dan me-3 m-2" type="button" data-toggle="modal" data-target="#exampleModalLong"><img style={{ height: '25px', width: '25px' }} src='./images/icons8-tasklist-50.png'></img></button>
+                                    </div>
+                                </div>
+                                <div className="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                                    <div className="modal-dialog" role="document">
+                                        <div className="modal-content">
+                                            <div className="modal-header">
+                                                <h5 className="modal-title" id="exampleModalLongTitle">Create Slip</h5>
+
+                                            </div>
+                                            <div className="modal-body">
+                                                <div className='form'>
+                                                    <div className="my-2 w-100">
+                                                        <div style={{ overflow: "auto" }} id="addSlip" className='my-3 p-2 mt-2'>
+                                                            {html.map((res) => {
+                                                                return (
+                                                                    ReactHtmlParser(res.substring())
+                                                                )
+                                                            })}
+                                                        </div>
+                                                        <div className="mb-3">
+                                                            <input type="text" className="form-control" id="in1" name='name' onChange={(e) => {
+                                                                // 1. Make a shallow copy of the array
+                                                                // console.log(e.target.id)
+                                                                let temp_state = [...saleData];
+
+                                                                // 2. Make a shallow copy of the element you want to mutate
+                                                                let temp_element = { ...temp_state[0] };
+                                                                // console.log(saleData)
+
+                                                                // 3. Update the property you're interested in
+                                                                temp_element.buyer = e.target.value;
+
+                                                                // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
+                                                                temp_state[0] = temp_element;
+
+                                                                // 5. Set the state to our new copy
+                                                                setsaleData(temp_state);
+                                                                // console.log(saleData)
+                                                            }}
+                                                                placeholder="Buyer Name" />
+                                                        </div>
+                                                        <div className="mb-3">
+                                                            <input type="text" className="form-control" id="in1" name='name' placeholder="Location" onChange={(e) => {
+                                                                // 1. Make a shallow copy of the array
+                                                                // console.log(e.target.id)
+                                                                let temp_state = [...saleData];
+
+                                                                // 2. Make a shallow copy of the element you want to mutate
+                                                                let temp_element = { ...temp_state[0] };
+                                                                // console.log(saleData)
+
+                                                                // 3. Update the property you're interested in
+                                                                temp_element.location = e.target.value;
+
+                                                                // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
+                                                                temp_state[0] = temp_element;
+
+                                                                // 5. Set the state to our new copy
+                                                                setsaleData(temp_state);
+                                                                // console.log(saleData)
+                                                            }}
+                                                            />
+                                                        </div>
+                                                        <div className="mb-3">
+                                                            <hr />
+                                                            {salesForm.map((val, index) => (
+                                                                <div className="dropdown">
+                                                                    <div className='d-flex justify-content-end my-2'>
+                                                                        <button type="button" class=" btn-close btn-close-danger" value={index} id={index+1} aria-label="Close"
+                                                                            onClick={(e) => {
+                                                                                
+                                                                                let temp_state_form = [...salesForm];
+                                                                                let temp_state_saleData = [...saleData];    
+
+
+                                                                                console.log(temp_state_form,temp_state_saleData,e.target.value,e.target.id)
+
+                                                                                temp_state_form.splice(e.target.value,1)
+                                                                                temp_state_saleData.splice(e.target.id,1)
+
+                                                                                setsaleData(temp_state_saleData)
+                                                                                setsalesForm(temp_state_form)
+                                                                                
+                                                                                console.log(salesForm,saleData)
+                                                                               
+                                                                            }}></button>
+                                                                    </div>
+
+                                                                    <select className="form-control" defaultValue='products' name={index + 1}
+                                                                        onChange={(e) => {
+                                                                            // 1. Make a shallow copy of the array
+                                                                            // console.log(e.target.id)
+                                                                            let temp_state = [...saleData];
+
+                                                                            // 2. Make a shallow copy of the element you want to mutate
+                                                                            let temp_element = { ...temp_state[e.target.name] };
+                                                                            // console.log(saleData)
+
+                                                                            // 3. Update the property you're interested in
+                                                                            temp_element.product_id = e.target.value;
+
+                                                                            // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
+                                                                            temp_state[e.target.name] = temp_element;
+
+                                                                            // 5. Set the state to our new copy
+                                                                            setsaleData(temp_state);
+                                                                        }}
+                                                                    >
+                                                                        <option value='products' disabled >Products</option>
+                                                                        {productNames.map((product) => {
+                                                                            return (
+                                                                                <option value={product._id} id={product._id} >{product.product_name}</option>
+                                                                            )
+                                                                        })}
+                                                                    </select>
+                                                                    <input type="number" min='0'  className="form-control mt-2" id="in1" name={index + 1} placeholder="Enter sales" onChange={(e) => {
+                                                                        let temp_state = [...saleData];
+
+                                                                        // 2. Make a shallow copy of the element you want to mutate
+                                                                        let temp_element = { ...temp_state[e.target.name] };
+                                                                        // console.log(temop)
+
+                                                                        // 3. Update the property you're interested in
+                                                                        temp_element.sell = e.target.value;
+
+                                                                        // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
+                                                                        temp_state[e.target.name] = temp_element;
+
+                                                                        // 5. Set the state to our new copy
+                                                                        setsaleData(temp_state);
+                                                                        // console.log(saleData)
+                                                                    }} />
+
+                                                                    <hr />
+                                                                </div>
+
+                                                            ))}
+                                                        </div>
+                                                        <div className="mb-3 inertInput d-flex justify-content-end">
+                                                            <button className="btn btn-primary rounded-circle" onClick={() => {
+
+                                                                setsalesForm([...salesForm, "new daTa"]);
+                                                                setsaleData([...saleData, { product_id: '', sell: 0 }])
+                                                            }} >+</button>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="modal-footer">
+                                                <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <button type="button" onClick={GenrateSlipt} className="btn btn-success">{addAnother ? 'Add reciept' : 'Create Reciept'}</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        )
+                    }
+                    )}
+                </div>
+
+
+                {/* <div className={`container d-phone my-5`}>
+                    {Products.map((user, index) => {
+                        return (
+                            <div className="row mb-5 pt-3 pb-2 d-flex flex-wrap popin bg-light m-auto w-100 rounded-3">
+                                <div className="col-12 col-md-12 m-auto d-flex my-3">
+                                    <span className='pe-2 me-3'><img style={{ width: "50px", height: "50px" }} src={user.img_url} alt="" /></span>
+                                    <h5 className="my-2 text-center"><p className='w-n'></p>  {user.product_name}</h5>
+                                </div>
+                                <div className="col-12 col-md-12 text-center m-auto my-3">
+                                    <h5 className="my-2 text-center d-flex ddf me-2">
+                                        <div className='mx-3'><p className='w-n '>Quantuty</p><p>{user.quantity}</p></div>
+                                        <div className='mx-3'><p className='w-n'>Sold</p><p>{user.sold}</p></div>
+                                    </h5>
+                                </div>
+                                <div className="col-12 col-md-12 m-auto my-4">
                                     <div className="my-2 text-center">
                                         <button className="btn btn-dan me-3" onClick={() => deleteUser(user._id)}> <span><MdIcon.MdDelete /></span> </button>
-                                        <Link to={`/users/edit/${user._id}`} className="btn btn-succ">Edit</Link>
+                                        <Link to={`/Products/edit/${user._id}`} className="btn btn-succ">Edit</Link>
+                                    </div>
+                                </div>
+                                <p>
+                                    <button className="btn btn-light w-100" type="button" data-bs-toggle="collapse" data-bs-target={`#collapseExample${user._id}`} aria-expanded="false" aria-controls={`collapseExample${user._id}`}>
+                                        <div className='text-center pt-3  w-n text-success'><p>Click Here To Create Slip</p></div>
+                                    </button>
+                                </p>
+                                <div className="collapse" id={`collapseExample${user._id}`}>
+                                    <div className="card card-body">
+                                        <div className="div my-3">
+                                            <Eye id={user.id} />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         )
                     }
                     )}
-                </div>
+                </div> */}
+
+
+
+
+
+
+
+
+
+
+
+
             </div>
             <TabStyle />
         </>
