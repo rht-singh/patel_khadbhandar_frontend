@@ -13,7 +13,6 @@ import Fboard from './components/Fboard';
 import Fboard2 from './components/Fboard2';
 import Eye from './components/user/Eye';
 import NotFound from './components/NotFound';
-import { BounceLoader } from 'react-spinners'
 import Cookies from 'universal-cookie';
 
 const AppStyle = () => {
@@ -38,30 +37,13 @@ const AppStyle = () => {
 export default function App() {
   const cookies = new Cookies();
     const token = cookies.get('auth_key');
-  // const [load, Setload] = useState(true)
-  // useEffect(() => {
-  //   setTimeout(setspinner, 3000)
-  // }, [])
-  // const setspinner = () => {
-  //   Setload(false)
-  // }
   return (
     <div>
       <AppStyle />
       <Router>
         {/* <Fboard/> */}
         <Switch>
-        {/* <Route
-                exact
-                path="/"
-                render={() => {
-                    return (
-                      token ?
-                      <Redirect to="/" /> :
-                      <Redirect to="/login" /> 
-                    )
-                }}
-              /> */}
+
           <Route exact path="/">
             <Fboard />
             <div className="mt-5">
@@ -71,9 +53,7 @@ export default function App() {
           <Route exact path="/login">
             {/* <Fboard/> */}
             <div style={{ postion: 'relative' }} className="container mt-5">
-              {/* <div className="loader-position">
-                <BounceLoader size={400} hidden={true} loading={load} />
-              </div> */}
+              
               <Login />
             </div>
           </Route>
