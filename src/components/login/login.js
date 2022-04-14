@@ -11,6 +11,14 @@ const LoStyle = () => {
             {`  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300&display=swap');
                 .form{
                     width:40%;
+
+                }
+                @media screen and (max-width:1000px){
+                    .form{
+                        width:100%;
+                        padding-top:50px;
+                        margin:0 !important;
+                    }
                 }
                 .rotate {
                     animation: rotation 1.5s infinite linear;
@@ -27,18 +35,11 @@ const LoStyle = () => {
                 .font{
                     font-family: 'Poppins', sans-serif;
                 }
-                @media screen and (max-width:768px){
-                    .form{
-                        width:100%;
-                        padding-top:50px;
-                    }
-                }
+                
+               
                 .img img{
                     widht:150px;
                     height:150px;
-                }
-                .form-col{
-                    padding:1% 10% 10% 10%;
                 }
                 .heone{
                     font-weight:600;
