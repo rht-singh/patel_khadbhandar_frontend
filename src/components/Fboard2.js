@@ -47,7 +47,7 @@ const Fboard = () => {
         axios({
             method: 'get',
             headers: { auth: `bearer ${token}` },
-            url: `https://ferltilizer.herokuapp.com/api/v1//product?name=${text}`,
+            url: `https://pkbfertilizer.herokuapp.com/api/v1//product?name=${text}`,
         })
             .then((resp) => {
                 dispatch({ type: 'products', data: resp.data })
@@ -59,7 +59,7 @@ const Fboard = () => {
         axios({
             method: 'get',
             headers: { auth: `bearer ${token}` },
-            url: 'https://ferltilizer.herokuapp.com/api/v1/logout',
+            url: 'https://pkbfertilizer.herokuapp.com/api/v1/logout',
         }).then((res) => {
             console.log(res)
             if (res.data.status == 'success') {

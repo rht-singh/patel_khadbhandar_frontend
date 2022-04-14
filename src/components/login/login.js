@@ -71,7 +71,7 @@ const Login = () => {
 
             axios({
                 method: 'post',
-                url: 'https://ferltilizer.herokuapp.com/api/v1/login',
+                url: 'https://pkbfertilizer.herokuapp.com/api/v1/login',
                 data: { email }
             }).then((res) => {
 
@@ -97,7 +97,7 @@ const Login = () => {
     const verify = () => {
         axios({
             method: 'get',
-            url: `https://ferltilizer.herokuapp.com/api/v1/verify?otp=${otp}&email=${email}`
+            url: `https://pkbfertilizer.herokuapp.com/api/v1/verify?otp=${otp}&email=${email}`
         }).then((res) => {
             cookies.set('auth_key', res.data.token);
             console.log(cookies.get('auth_key'))

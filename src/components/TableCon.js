@@ -171,7 +171,7 @@ const TableCon = () => {
         axios({
             method: 'get',
             headers: { auth: `bearer ${token}` },
-            url: `https://ferltilizer.herokuapp.com/api/v1//product?name=${text}`,
+            url: `https://pkbfertilizer.herokuapp.com/api/v1//product?name=${text}`,
         })
             .then((resp) => {
                 dispatch({ type: 'products', data: resp.data })
@@ -186,7 +186,7 @@ const TableCon = () => {
         axios({
             method: 'post',
             headers: { auth: `bearer ${token}` },
-            url: 'https://ferltilizer.herokuapp.com/api/v1/getSlip',
+            url: 'https://pkbfertilizer.herokuapp.com/api/v1/getSlip',
             data: { data: saleData },
         })
             .then((res) => {
@@ -210,7 +210,7 @@ const TableCon = () => {
             method: 'get',
 
             headers: { auth: `bearer ${token}` },
-            url: 'https://ferltilizer.herokuapp.com/api/v1/AllProduct',
+            url: 'https://pkbfertilizer.herokuapp.com/api/v1/AllProduct',
         })
             .then((res) => {
                 if (res.data.success === false) {
@@ -227,7 +227,7 @@ const TableCon = () => {
             method: 'get',
 
             headers: { auth: `bearer ${token}` },
-            url: 'https://ferltilizer.herokuapp.com/api/v1/get_all_products_detail',
+            url: 'https://pkbfertilizer.herokuapp.com/api/v1/get_all_products_detail',
         })
             .then((resp) => {
                 if (resp.data.data.length > 0) {

@@ -43,7 +43,7 @@ const Edit = () => {
             method: 'get',
 
             headers: { auth: `bearer ${token}` },
-            url: `https://ferltilizer.herokuapp.com/api/v1/product_detail/${product_id}`,
+            url: `https://pkbfertilizer.herokuapp.com/api/v1/product_detail/${product_id}`,
             // data: Product
         }).then((res) => {
             setData(res.data.data[0])
@@ -71,7 +71,7 @@ const Edit = () => {
             method: 'put',
 
             headers: { auth: `bearer ${token}` },
-            url: 'https://ferltilizer.herokuapp.com/api/v1/update_product',
+            url: 'https://pkbfertilizer.herokuapp.com/api/v1/update_product',
             data: Product
         }).then((res) => console.log(res))
             .catch(err => console.log(err))
