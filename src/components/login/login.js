@@ -12,6 +12,18 @@ const LoStyle = () => {
                 .form{
                     width:40%;
                 }
+                .rotate {
+                    animation: rotation 1.5s infinite linear;
+                  }
+                  
+                @keyframes rotation {
+                  from {
+                    transform: rotate(0deg);
+                  }
+                  to {
+                    transform: rotate(359deg);
+                  }
+                }
                 .font{
                     font-family: 'Poppins', sans-serif;
                 }
@@ -62,7 +74,7 @@ const Login = () => {
                 url: 'https://ferltilizer.herokuapp.com/api/v1/login',
                 data: { email }
             }).then((res) => {
-                
+
                 if (res.data.status === 'success') {
                     toast.success("OTP Sent")
                     setOtpClass("mb-3 d-block")
@@ -70,7 +82,7 @@ const Login = () => {
                     setclick(true)
                     inputRef.current.disabled = true;
                 }
-                else{
+                else {
                     toast.error("Email Not Registerd")
 
                 }
@@ -81,16 +93,16 @@ const Login = () => {
             toast.error("Email input is empty")
         }
     }
-    const cookies =  new Cookies();
+    const cookies = new Cookies();
     const verify = () => {
         axios({
             method: 'get',
             url: `https://ferltilizer.herokuapp.com/api/v1/verify?otp=${otp}&email=${email}`
         }).then((res) => {
-            cookies.set('auth_key',res.data.token);
+            cookies.set('auth_key', res.data.token);
             console.log(cookies.get('auth_key'))
             toast.success("Logged In")
-            dispatch({type:'AUTH',data:res.data.token})
+            dispatch({ type: 'AUTH', data: res.data.token })
             history.push("/")
         })
     }
@@ -99,8 +111,22 @@ const Login = () => {
         e.preventDefault();
     }
 
+    const [load, Setload] = useState(true)
+    useEffect(() => {
+        setTimeout(setspinner, 3000)
+    }, [])
+    const setspinner = () => {
+        Setload(false)
+    }
+
     return (
         <>
+
+            {load?
+            <div className="d-flex justify-content-center align-items-center" style={{ height: '80vh' }}>
+                <img src="./images/fz3.png" className='rotate' alt="" />
+            </div>
+            :
             <div className="container-fluid w-100 font">
                 <div className="row">
                     <div className="col-12 col-md-12 form-col">
@@ -124,7 +150,7 @@ const Login = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>}
             <ToastContainer />
             <LoStyle />
         </>
