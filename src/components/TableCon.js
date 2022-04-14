@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import * as FaIcon from 'react-icons/fa'
 import * as BiIcon from 'react-icons/bi'
 import * as MdIcon from 'react-icons/md'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Cookies from 'universal-cookie'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import { ToastContainer, toast } from 'react-toastify';
@@ -36,7 +36,11 @@ const TabStyle = () => {
                     display:block;
                     margin-bottom:55px;
                 }
-                
+
+                .d-show{
+                    display:none !important;
+
+                }
                 .d-phone{
                     display:none;
                 }
@@ -54,6 +58,9 @@ const TabStyle = () => {
                     }
                 }
                 @media screen and (max-width:780px){
+                    .d-show{
+                        display:flex !important;
+                    }
                 
                     .main-card{
                         height:150px;
@@ -148,11 +155,30 @@ const TableCon = () => {
     const [html, Sethtml] = useState([])
     const [addAnother, setaddAnother] = useState(false)
     const [flag, setFlag] = useState(false)
+    const [showSlip, setshowSlip] = useState(false)
     const [Products, setProducts] = useState([])
     const [productNames, setproductNames] = useState([])
     const [salesForm, setsalesForm] = useState([{ 'data': 1 }])
     const [saleData, setsaleData] = useState([{ buyer: '', location: 0 }, { product_id: '', sell: 0 }])
     const history = useHistory()
+
+    const dispatch = useDispatch()
+
+    const [text, setText] = useState("")
+    const handleClick = (e) => {
+        e.preventDefault()
+
+        axios({
+            method: 'get',
+            headers: { auth: `bearer ${token}` },
+            url: `https://ferltilizer.herokuapp.com/api/v1//product?name=${text}`,
+        })
+            .then((resp) => {
+                dispatch({ type: 'products', data: resp.data })
+                history.push("/")
+
+            })
+    }
 
 
     const GenrateSlipt = () => {
@@ -164,10 +190,13 @@ const TableCon = () => {
             data: { data: saleData },
         })
             .then((res) => {
-                console.log(res.data.html)
+                console.log(res)
+                if(res.data.sucess || res.data.success){
+                    setaddAnother(true)
+                    setshowSlip(true)
+                }
                 if (res.data.html)
                     Sethtml([...html, res.data.html])
-                setaddAnother(true)
                 // html.push(res.data.html) 
             })
             .catch(err => console.log(err))
@@ -189,8 +218,6 @@ const TableCon = () => {
                     toast.error(res.data.error)
                     history.push("/login")
                 }
-                console.log('first')
-                console.log(res)
                 setProducts(res.data.data)
                 setproductNames(res.data.data.map((i) => i))
             })
@@ -281,27 +308,32 @@ const TableCon = () => {
                     </div>
                 </div>
 
+                <form className="d-flex m-auto pt-5  d-show">
+                    <input className="form-control me-2" type="search" value={text} onChange={e => setText(e.target.value)} placeholder="Search" aria-label="Search" />
+                    <button onClick={handleClick} className="btn text-white border colr" type="submit">Search</button>
+                </form>
+
                 <div className={`container mt-5 mb-3 d-laptop`}>
                     <div className="row d-laptop">
                         <div className="col-2 col-md-2 col-sm-2 col-lg-2">
-                            <h2 style={{fontSize:'15px'}} className="my-2 text-center">No</h2>
+                            <h2 style={{ fontSize: '15px' }} className="my-2 text-center">No</h2>
                         </div>
                         <div className="col-3 col-md-2 col-sm-2 col-lg-2">
-                            <h2 style={{fontSize:'15px'}} className="my-2 text-center">Product Name</h2>
+                            <h2 style={{ fontSize: '15px' }} className="my-2 text-center">Product Name</h2>
                         </div>
                         <div className="col-3 col-md-2 col-sm-2 col-lg-2">
-                            <h2 style={{fontSize:'15px'}} className="my-2 text-end ">Quantity</h2>
+                            <h2 style={{ fontSize: '15px' }} className="my-2 text-end ">Quantity</h2>
                         </div>
                         <div className="col-2 col-md-2 col-sm-2 col-lg-2">
-                            <h2 style={{fontSize:'15px'}} className="my-2 text-end">Sold</h2>
+                            <h2 style={{ fontSize: '15px' }} className="my-2 text-end">Sold</h2>
                         </div>
-                        <div className="col-1 col-md-2 col-sm-2 col-lg-2    ">
-                            <h2 style={{fontSize:'15px'}} className="my-2 text-end">Action</h2>
+                        <div className="col-1 col-md-2 col-sm-2 col-lg-2">
+                            <h2 style={{ fontSize: '15px' }} className="my-2 text-end">Action</h2>
                         </div>
                     </div>
                 </div>
 
-                <div className={`  d-laptop`}>
+                <div className={`d-laptop`}>
                     {Products.map((user, index) => {
                         return (
                             <div className="row mb-5 d-laptop pt-3 pb-2 px-1 d-flex flex-wrap popin bg-light m-auto w-100 rounded-3">
@@ -324,6 +356,28 @@ const TableCon = () => {
                                         <button className="btn btn-dan me-3 m-2" type="button" data-toggle="modal" data-target="#exampleModalLong"><img style={{ height: '25px', width: '25px' }} src='./images/icons8-tasklist-50.png'></img></button>
                                     </div>
                                 </div>
+                                <div className="col-12">
+                                    <div class={showSlip ? "accordion accordion-flush " : "accordion accordion-flush d-none"} id="accordionFlushExample">
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id={`flush-heading${user._id}`}>
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target={`#flush-collapse${user._id}`} aria-expanded="false" aria-controls={`flush-collapse${user._id}`}>
+                                                    Show Slip
+                                                </button>
+                                            </h2>
+                                            <div id={`flush-collapse${user._id}`} class="accordion-collapse collapse" aria-labelledby={`flush-heading${user._id}`} data-bs-parent="#accordionFlushExample">
+                                                <div class="accordion-body">
+                                                    <div style={{ overflow: "auto" }} id="addSlip" className='my-3 p-2 mt-2'>
+                                                        {html.map((res) => {
+                                                            return (
+                                                                ReactHtmlParser(res.substring())
+                                                            )
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div className="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
                                     <div className="modal-dialog" role="document">
                                         <div className="modal-content">
@@ -334,15 +388,9 @@ const TableCon = () => {
                                             <div className="modal-body">
                                                 <div className='form'>
                                                     <div className="my-2 w-100">
-                                                        <div style={{ overflow: "auto" }} id="addSlip" className='my-3 p-2 mt-2'>
-                                                            {html.map((res) => {
-                                                                return (
-                                                                    ReactHtmlParser(res.substring())
-                                                                )
-                                                            })}
-                                                        </div>
+
                                                         <div className="mb-3">
-                                                            <input type="text" className="form-control" id="in1" name='name' onChange={(e) => {
+                                                            <input type="text" className="form-control" id="in1" name='name' required onChange={(e) => {
                                                                 // 1. Make a shallow copy of the array
                                                                 // console.log(e.target.id)
                                                                 let temp_state = [...saleData];
@@ -364,7 +412,7 @@ const TableCon = () => {
                                                                 placeholder="Buyer Name" />
                                                         </div>
                                                         <div className="mb-3">
-                                                            <input type="text" className="form-control" id="in1" name='name' placeholder="Location" onChange={(e) => {
+                                                            <input type="text" className="form-control" id="in1" name='name' required placeholder="Location" onChange={(e) => {
                                                                 // 1. Make a shallow copy of the array
                                                                 // console.log(e.target.id)
                                                                 let temp_state = [...saleData];
@@ -390,27 +438,27 @@ const TableCon = () => {
                                                             {salesForm.map((val, index) => (
                                                                 <div className="dropdown">
                                                                     <div className='d-flex justify-content-end my-2'>
-                                                                        <button type="button" class=" btn-close btn-close-danger" value={index} id={index+1} aria-label="Close"
+                                                                        <button type="button" class=" btn-close btn-close-danger" value={index} id={index + 1} aria-label="Close"
                                                                             onClick={(e) => {
-                                                                                
+
                                                                                 let temp_state_form = [...salesForm];
-                                                                                let temp_state_saleData = [...saleData];    
+                                                                                let temp_state_saleData = [...saleData];
 
 
-                                                                                console.log(temp_state_form,temp_state_saleData,e.target.value,e.target.id)
+                                                                                console.log(temp_state_form, temp_state_saleData, e.target.value, e.target.id)
 
-                                                                                temp_state_form.splice(e.target.value,1)
-                                                                                temp_state_saleData.splice(e.target.id,1)
+                                                                                temp_state_form.splice(e.target.value, 1)
+                                                                                temp_state_saleData.splice(e.target.id, 1)
 
                                                                                 setsaleData(temp_state_saleData)
                                                                                 setsalesForm(temp_state_form)
-                                                                                
-                                                                                console.log(salesForm,saleData)
-                                                                               
+
+                                                                                console.log(salesForm, saleData)
+
                                                                             }}></button>
                                                                     </div>
 
-                                                                    <select className="form-control" defaultValue='products' name={index + 1}
+                                                                    <select required className="form-control" defaultValue='products' name={index + 1}
                                                                         onChange={(e) => {
                                                                             // 1. Make a shallow copy of the array
                                                                             // console.log(e.target.id)
@@ -437,7 +485,7 @@ const TableCon = () => {
                                                                             )
                                                                         })}
                                                                     </select>
-                                                                    <input type="number" min='0'  className="form-control mt-2" id="in1" name={index + 1} placeholder="Enter sales" onChange={(e) => {
+                                                                    <input type="number" required min='0' className="form-control mt-2" id="in1" name={index + 1} placeholder="Enter sales" onChange={(e) => {
                                                                         let temp_state = [...saleData];
 
                                                                         // 2. Make a shallow copy of the element you want to mutate
@@ -473,7 +521,7 @@ const TableCon = () => {
                                             </div>
                                             <div className="modal-footer">
                                                 <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                <button type="button" onClick={GenrateSlipt} className="btn btn-success">{addAnother ? 'Add reciept' : 'Create Reciept'}</button>
+                                                <button type="button" onClick={GenrateSlipt} className="btn btn-success" data-bs-dismiss="modal">{addAnother ? 'Add reciept' : 'Create Reciept'}</button>
                                             </div>
                                         </div>
                                     </div>
@@ -484,57 +532,6 @@ const TableCon = () => {
                     }
                     )}
                 </div>
-
-
-                {/* <div className={`container d-phone my-5`}>
-                    {Products.map((user, index) => {
-                        return (
-                            <div className="row mb-5 pt-3 pb-2 d-flex flex-wrap popin bg-light m-auto w-100 rounded-3">
-                                <div className="col-12 col-md-12 m-auto d-flex my-3">
-                                    <span className='pe-2 me-3'><img style={{ width: "50px", height: "50px" }} src={user.img_url} alt="" /></span>
-                                    <h5 className="my-2 text-center"><p className='w-n'></p>  {user.product_name}</h5>
-                                </div>
-                                <div className="col-12 col-md-12 text-center m-auto my-3">
-                                    <h5 className="my-2 text-center d-flex ddf me-2">
-                                        <div className='mx-3'><p className='w-n '>Quantuty</p><p>{user.quantity}</p></div>
-                                        <div className='mx-3'><p className='w-n'>Sold</p><p>{user.sold}</p></div>
-                                    </h5>
-                                </div>
-                                <div className="col-12 col-md-12 m-auto my-4">
-                                    <div className="my-2 text-center">
-                                        <button className="btn btn-dan me-3" onClick={() => deleteUser(user._id)}> <span><MdIcon.MdDelete /></span> </button>
-                                        <Link to={`/Products/edit/${user._id}`} className="btn btn-succ">Edit</Link>
-                                    </div>
-                                </div>
-                                <p>
-                                    <button className="btn btn-light w-100" type="button" data-bs-toggle="collapse" data-bs-target={`#collapseExample${user._id}`} aria-expanded="false" aria-controls={`collapseExample${user._id}`}>
-                                        <div className='text-center pt-3  w-n text-success'><p>Click Here To Create Slip</p></div>
-                                    </button>
-                                </p>
-                                <div className="collapse" id={`collapseExample${user._id}`}>
-                                    <div className="card card-body">
-                                        <div className="div my-3">
-                                            <Eye id={user.id} />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )
-                    }
-                    )}
-                </div> */}
-
-
-
-
-
-
-
-
-
-
-
-
             </div>
             <TabStyle />
         </>
