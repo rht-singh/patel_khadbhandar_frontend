@@ -46,7 +46,7 @@ const Eye = (props) => {
         const cookies = new Cookies();
         const token = cookies.get('auth_key');
 
-        const { data } = await axios.get(`https://ferltilizer.herokuapp.com/api/v1/getSlip?id=624559725ea428e656d1cc72&sold=2&buyer=rohit`, {
+        const { data } = await axios.get(`https://pkbfertilizer.herokuapp.com/api/v1/getSlip?id=624559725ea428e656d1cc72&sold=2&buyer=rohit`, {
             headers: {
                 auth: `bearer ${token}`
             }

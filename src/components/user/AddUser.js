@@ -48,7 +48,7 @@ const AddProduct = () => {
         axios({
             method: 'post',
             headers:{auth:`bearer ${token}`},
-            url: 'https://ferltilizer.herokuapp.com/api/v1/product',
+            url: 'https://pkbfertilizer.herokuapp.com/api/v1/product',
             data: Product
         }).then((res) => console.log(res))
         .catch(err => console.log(err))
