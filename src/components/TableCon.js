@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import ReactHtmlParser from 'react-html-parser';
 import { Link } from 'react-router-dom'
@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Cookies from 'universal-cookie'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import { ToastContainer, toast } from 'react-toastify';
+import ReactToPrint from 'react-to-print';
 // import Eye from './user/Eye'/
 
 const TabStyle = () => {
@@ -163,7 +164,7 @@ const TableCon = () => {
     const history = useHistory()
 
     const dispatch = useDispatch()
-
+    const componentRef = useRef();
     const [text, setText] = useState("")
     const handleClick = (e) => {
         e.preventDefault()
@@ -191,7 +192,7 @@ const TableCon = () => {
         })
             .then((res) => {
                 console.log(res)
-                if(res.data.sucess || res.data.success){
+                if (res.data.sucess || res.data.success) {
                     setaddAnother(true)
                     setshowSlip(true)
                 }
@@ -366,12 +367,23 @@ const TableCon = () => {
                                             </h2>
                                             <div id={`flush-collapse${user._id}`} class="accordion-collapse collapse" aria-labelledby={`flush-heading${user._id}`} data-bs-parent="#accordionFlushExample">
                                                 <div class="accordion-body">
-                                                    <div style={{ overflow: "auto" }} id="addSlip" className='my-3 p-2 mt-2'>
-                                                        {html.map((res) => {
-                                                            return (
-                                                                ReactHtmlParser(res.substring())
-                                                            )
-                                                        })}
+                                                    <div  style={{ overflow: "auto" }} id="addSlip" className='my-3 p-2 mt-2'>
+                                                        <div ref={componentRef}>
+                                                            {html.map((res) => {
+                                                                return (
+                                                                    ReactHtmlParser(res.substring())
+
+
+                                                                )
+                                                            })}
+                                                        </div>
+                                                        <div className="d-flex justify-content-end">
+                                                            <ReactToPrint
+                                                                trigger={() => <button className='btn btn-primary m-3'>print</button>}
+                                                                content={() => componentRef.current}
+                                                            />
+
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -521,7 +533,7 @@ const TableCon = () => {
                                             </div>
                                             <div className="modal-footer">
                                                 <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                <button type="button" onClick={GenrateSlipt} className="btn btn-success" data-bs-dismiss="modal">{addAnother ? 'Add reciept' : 'Create Reciept'}</button>
+                                                <button type="button" onClick={GenrateSlipt} className="btn btn-success" data-dismiss="modal" aria-label="Close">{addAnother ? 'Add reciept' : 'Create Reciept'}</button>
                                             </div>
                                         </div>
                                     </div>
