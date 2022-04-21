@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
+import Slip from './Slip'
 import ReactHtmlParser from 'react-html-parser';
 import { Link } from 'react-router-dom'
 import * as FaIcon from 'react-icons/fa'
@@ -164,7 +165,7 @@ const TableCon = () => {
     const history = useHistory()
 
     const dispatch = useDispatch()
-    const componentRef = useRef();
+    
     const [text, setText] = useState("")
     const handleClick = (e) => {
         e.preventDefault()
@@ -198,7 +199,6 @@ const TableCon = () => {
                 }
                 if (res.data.html)
                     Sethtml([...html, res.data.html])
-                // html.push(res.data.html) 
             })
             .catch(err => console.log(err))
 
@@ -357,39 +357,9 @@ const TableCon = () => {
                                         <button className="btn btn-dan me-3 m-2" type="button" data-toggle="modal" data-target="#exampleModalLong"><img style={{ height: '25px', width: '25px' }} src='./images/icons8-tasklist-50.png'></img></button>
                                     </div>
                                 </div>
-                                <div className="col-12">
-                                    <div class={showSlip ? "accordion accordion-flush " : "accordion accordion-flush d-none"} id="accordionFlushExample">
-                                        <div class="accordion-item">
-                                            <h2 class="accordion-header" id={`flush-heading${user._id}`}>
-                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target={`#flush-collapse${user._id}`} aria-expanded="false" aria-controls={`flush-collapse${user._id}`}>
-                                                    Show Slip
-                                                </button>
-                                            </h2>
-                                            <div id={`flush-collapse${user._id}`} class="accordion-collapse collapse" aria-labelledby={`flush-heading${user._id}`} data-bs-parent="#accordionFlushExample">
-                                                <div class="accordion-body">
-                                                    <div  style={{ overflow: "auto" }} id="addSlip" className='my-3 p-2 mt-2'>
-                                                        <div ref={componentRef}>
-                                                            {html.map((res) => {
-                                                                return (
-                                                                    ReactHtmlParser(res.substring())
-
-
-                                                                )
-                                                            })}
-                                                        </div>
-                                                        <div className="d-flex justify-content-end">
-                                                            <ReactToPrint
-                                                                trigger={() => <button className='btn btn-primary m-3'>print</button>}
-                                                                content={() => componentRef.current}
-                                                            />
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                {html.map((slip,index) => (
+                                   <Slip index={index} slip={slip} user={user}/>
+                                ))}
                                 <div className="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
                                     <div className="modal-dialog" role="document">
                                         <div className="modal-content">
@@ -450,7 +420,7 @@ const TableCon = () => {
                                                             {salesForm.map((val, index) => (
                                                                 <div className="dropdown">
                                                                     <div className='d-flex justify-content-end my-2'>
-                                                                        <button type="button" class=" btn-close btn-close-danger" value={index} id={index + 1} aria-label="Close"
+                                                                        <button type="button" className=" btn-close btn-close-danger" value={index} id={index + 1} aria-label="Close"
                                                                             onClick={(e) => {
 
                                                                                 let temp_state_form = [...salesForm];
